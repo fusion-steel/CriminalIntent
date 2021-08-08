@@ -5,12 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.criminalintent.databinding.FragmentCrimeListBinding
+import com.example.criminalintent.databinding.ListItemCrimeBinding
 
 private const val TAG = "CrimeListFragment"
 
@@ -50,8 +50,7 @@ class CrimeListFragment : Fragment() {
 
     private inner class CrimeHolder(view: View)
         : RecyclerView.ViewHolder(view) {
-            val titleTextView: TextView = itemView.findViewById(R.id.crime_title)
-            val dateTextView: TextView = itemView.findViewById(R.id.crime_date)
+            val bindingItem = ListItemCrimeBinding.bind(view)
     }
 
     private inner class CrimeAdapter(var crimes: List<Crime>)
@@ -65,8 +64,8 @@ class CrimeListFragment : Fragment() {
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
             val crime = crimes[position]
             holder.apply {
-                titleTextView.text = crime.title
-                dateTextView.text = crime.date.toString()
+                bindingItem.crimeTitle.text = crime.title
+                bindingItem.crimeDate.text = crime.date.toString()
             }
         }
 
