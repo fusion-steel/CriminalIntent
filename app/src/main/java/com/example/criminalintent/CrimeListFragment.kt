@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,8 +50,12 @@ class CrimeListFragment : Fragment() {
     }
 
     private inner class CrimeHolder(view: View)
-        : RecyclerView.ViewHolder(view) {
+        : RecyclerView.ViewHolder(view), View.OnClickListener {
         private lateinit var crime: Crime
+
+        init {
+            view.setOnClickListener(this)
+        }
 
         val bindingItem = ListItemCrimeBinding.bind(view)
 
@@ -58,6 +63,11 @@ class CrimeListFragment : Fragment() {
             this.crime = crime
             bindingItem.crimeTitle.text = this.crime.title
             bindingItem.crimeDate.text = this.crime.date.toString()
+        }
+
+        override fun onClick(v: View?) {
+            Toast.makeText(context, "${crime.title} pressed!", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
