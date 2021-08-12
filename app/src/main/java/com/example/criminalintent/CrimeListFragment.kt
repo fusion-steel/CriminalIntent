@@ -63,6 +63,11 @@ class CrimeListFragment : Fragment() {
             this.crime = crime
             bindingItem.crimeTitle.text = this.crime.title
             bindingItem.crimeDate.text = this.crime.date.toString()
+            bindingItem.crimeSolved.visibility = if (crime.isSolved) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         }
 
         override fun onClick(v: View?) {
