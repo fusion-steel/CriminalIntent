@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.criminalintent.databinding.FragmentCrimeBinding
 import java.util.*
 
@@ -20,11 +22,16 @@ class CrimeFragment : Fragment() {
 
     lateinit var crime: Crime
 
+    private val crimeDetailViewModel: CrimeDetailViewModel by lazy {
+        ViewModelProvider(this).get(CrimeDetailViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
         val crimeId = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         Log.d(TAG, "args bundle crime ID: $crimeId")
+        crimeDetailViewModel.loadCrime(crimeId)
     }
 
     override fun onDestroyView() {
@@ -45,6 +52,28 @@ class CrimeFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        crimeDetailViewModel.crimeLiveData.observe(
+            viewLifecycleOwner,
+            Observer { crime ->
+                crime?.let {
+                    this.crime = crime
+                    updateUI()
+                }
+            }
+        )
+    }
+
+    private fun updateUI() {
+        with (binding) {
+            crimeTitle.setText(crime.title)
+            crimeDate.text = crime.date.toString()
+            crimeSolved.isChecked = crime.isSolved
+        }
+
     }
 
     override fun onStart() {
