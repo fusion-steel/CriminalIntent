@@ -3,11 +3,16 @@ package com.example.criminalintent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.criminalintent.databinding.FragmentCrimeBinding
+import java.util.*
+
+private const val TAG = "CrimeFragment"
+private const val ARG_CRIME_ID = "crime_id"
 
 class CrimeFragment : Fragment() {
     private var _binding: FragmentCrimeBinding? = null
@@ -18,6 +23,8 @@ class CrimeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
+        val crimeId = arguments?.getSerializable(ARG_CRIME_ID) as UUID
+        Log.d(TAG, "args bundle crime ID: $crimeId")
     }
 
     override fun onDestroyView() {
@@ -57,6 +64,17 @@ class CrimeFragment : Fragment() {
             crimeTitle.addTextChangedListener(titleWatcher)
             crimeSolved.setOnCheckedChangeListener { _, isChecked ->
                 crime.isSolved = isChecked
+            }
+        }
+    }
+
+    companion object {
+        fun newInstance(crimeId: UUID): CrimeFragment {
+            val args = Bundle().apply {
+                putSerializable(ARG_CRIME_ID, crimeId)
+            }
+            return CrimeFragment().apply {
+                arguments = args
             }
         }
     }
