@@ -71,7 +71,10 @@ class CrimeFragment : Fragment() {
         with (binding) {
             crimeTitle.setText(crime.title)
             crimeDate.text = crime.date.toString()
-            crimeSolved.isChecked = crime.isSolved
+            crimeSolved.apply {
+                isChecked = crime.isSolved
+                jumpDrawablesToCurrentState() //skips checkbox animation
+            }
         }
 
     }
