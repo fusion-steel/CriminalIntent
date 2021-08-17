@@ -26,6 +26,11 @@ class CrimeFragment : Fragment() {
         ViewModelProvider(this).get(CrimeDetailViewModel::class.java)
     }
 
+    override fun onStop() {
+        super.onStop()
+        crimeDetailViewModel.saveCrime(crime)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
