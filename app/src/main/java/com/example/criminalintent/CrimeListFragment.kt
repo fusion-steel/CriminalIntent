@@ -6,15 +6,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.criminalintent.databinding.FragmentCrimeListBinding
 import com.example.criminalintent.databinding.ListItemCrimeBinding
 import java.util.*
+import androidx.recyclerview.widget.ListAdapter
 
 private const val TAG = "CrimeListFragment"
 
@@ -64,6 +65,7 @@ class CrimeListFragment : Fragment() {
             Observer { crimes ->
                 crimes.let {
                     Log.i(TAG, "Got crimes ${crimes.size}")
+                    adapter?.submitList(crimes)
                     updateUI(crimes)
                 }
             })
@@ -101,7 +103,7 @@ class CrimeListFragment : Fragment() {
     }
 
     private inner class CrimeAdapter(var crimes: List<Crime>)
-        : RecyclerView.Adapter<CrimeHolder>() {
+        : ListAdapter<Crime, CrimeHolder>(DiffCallback()) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
@@ -114,6 +116,16 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun getItemCount(): Int = crimes.size
+    }
+
+    class DiffCallback : DiffUtil.ItemCallback<Crime>() {
+        override fun areItemsTheSame(oldItem: Crime, newItem: Crime): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Crime, newItem: Crime): Boolean {
+            return oldItem == newItem
+        }
     }
 
     override fun onDestroyView() {
