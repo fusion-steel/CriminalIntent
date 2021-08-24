@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.criminalintent.databinding.FragmentCrimeBinding
@@ -15,8 +16,9 @@ import java.util.*
 
 private const val TAG = "CrimeFragment"
 private const val ARG_CRIME_ID = "crime_id"
+private const val REQUEST_DATE = "DialogDate"
 
-class CrimeFragment : Fragment() {
+class CrimeFragment : Fragment(), FragmentResultListener {
     private var _binding: FragmentCrimeBinding? = null
     private val binding get() = _binding!!
 
@@ -51,11 +53,6 @@ class CrimeFragment : Fragment() {
     ): View? {
         _binding = FragmentCrimeBinding.inflate(inflater, container, false)
 
-        binding.crimeDate.apply {
-            text = crime.date.toString()
-            isEnabled = false
-        }
-
         return binding.root
     }
 
@@ -70,6 +67,7 @@ class CrimeFragment : Fragment() {
                 }
             }
         )
+        childFragmentManager.setFragmentResultListener(REQUEST_DATE, viewLifecycleOwner, this)
     }
 
     private fun updateUI() {
@@ -102,6 +100,11 @@ class CrimeFragment : Fragment() {
             crimeSolved.setOnCheckedChangeListener { _, isChecked ->
                 crime.isSolved = isChecked
             }
+
+            crimeDate.setOnClickListener {
+                DatePickerFragment
+                    .newInstance(crime.date, REQUEST_DATE)
+                    .show(childFragmentManager, REQUEST_DATE)}
         }
     }
 
@@ -112,6 +115,16 @@ class CrimeFragment : Fragment() {
             }
             return CrimeFragment().apply {
                 arguments = args
+            }
+        }
+    }
+
+    override fun onFragmentResult(requestCode: String, result: Bundle) {
+        when (requestCode) {
+            REQUEST_DATE -> {
+                Log.d(TAG, "receive result for $requestCode")
+                crime.date = DatePickerFragment.getSelectedDate(result)
+                updateUI()
             }
         }
     }
